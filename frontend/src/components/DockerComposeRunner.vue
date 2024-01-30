@@ -1,38 +1,49 @@
 <template>
-  <div>
-    <input type="text" v-model="folderPath" placeholder="Enter folder path" />
-    <button @click="runDockerCompose">Run Docker Compose</button>
-    <div v-if="output">
-      <h3>Output:</h3>
-      <pre>{{ output }}</pre>
+    <div>
+      <select v-model="selectedFolder">
+        <option v-for="folder in folders" :key="folder" :value="folder">{{ folder }}</option>
+      </select>
+      <button @click="runDockerCompose">Run Docker Compose</button>
+      <div v-if="output">
+        <h3>Output:</h3>
+        <pre>{{ output }}</pre>
+      </div>
     </div>
-  </div>
-</template>
-
-<script>
-import axios from "axios";
-
-export default {
-  name: "DockerComposeRunner",
-  data() {
-    return {
-      folderPath: "",
-      output: "",
-    };
-  },
-  methods: {
-    async runDockerCompose() {
-      try {
-        const response = await axios.post(
-          "http://127.0.0.1:5000/run-docker-compose",
-          { folderPath: this.folderPath }
-        );
-        this.output = response.data;
-      } catch (error) {
-        console.error(error);
-        this.output = "Error: " + error.message;
-      }
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  
+  export default {
+    data() {
+      return {
+        folders: [],
+        selectedFolder: '',
+        output: ''
+      };
     },
-  },
-};
-</script>
+    mounted() {
+      this.fetchFolders();
+    },
+    methods: {
+      fetchFolders() {
+        axios.get('http://127.0.0.1:5000/list-folders')
+          .then(response => {
+            this.folders = response.data;
+          })
+          .catch(error => console.error('Error:', error));
+      },
+      runDockerCompose() {
+        axios.post('http://127.0.0.1:5000/run-docker-compose', { folderName: this.selectedFolder })
+          .then(response => {
+            this.output = response.data.output;
+          })
+          .catch(error => {
+            this.output = 'Error occurred while running Docker Compose.';
+            console.error('Error:', error);
+          });
+      },
+    },
+  };
+  </script>
+  

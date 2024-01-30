@@ -6,6 +6,15 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/list-folders', methods=['GET'])
+def list_folders():
+    base_path = '../stack'
+    try:
+        folders = [name for name in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, name))]
+        return jsonify(folders)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 @app.route('/run-docker-compose', methods=['POST'])
 def run_docker_compose():
     predefined_path = '../stack/nginx'
