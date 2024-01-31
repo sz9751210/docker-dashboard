@@ -3,7 +3,7 @@
     <!-- Container -->
     <el-container>
       <!-- Sidebar -->
-      <el-aside :width="isSidebarCollapsed ? '0px' : '200px'" class="sidebar">
+      <el-aside width="200px" class="sidebar">
         <div
           class="sidebar-content"
           :style="{ 'margin-top': isSidebarCollapsed ? '10px' : '60px' }"
@@ -16,87 +16,94 @@
           >
         </div>
       </el-aside>
-
-      <!-- Main Content -->
-      <el-main class="main-content">
-        <!-- Collapse Button -->
-        <el-button
+      <el-container>
+        <el-header class="header">Header</el-header>
+        <!-- Main Content -->
+        <el-main class="main-content">
+          <!-- Collapse Button -->
+          <!-- <el-button
           type="primary"
           icon="el-icon-menu"
           @click="toggleSidebar"
           class="collapse-btn"
         >
           <img :src="require('@/assets/collapseleft.png')" alt="Button Image" />
-        </el-button>
+        </el-button> -->
 
-        <!-- Content Here -->
-        <div class="content">
-          <el-table
-            v-if="dockerImagesParsed.length > 0"
-            :data="dockerImagesParsed"
-            style="width: 100%"
-          >
-            <el-table-column
-              prop="repository"
-              label="REPOSITORY"
-            ></el-table-column>
-            <el-table-column prop="tag" label="TAG"></el-table-column>
-            <el-table-column prop="imageId" label="IMAGE ID"></el-table-column>
-            <el-table-column prop="created" label="CREATED"></el-table-column>
-            <el-table-column prop="size" label="SIZE"></el-table-column>
-            <el-table-column label="ACTION">
-              <template v-slot="scope">
-                <el-button size="mini" @click="openStartDialog(scope.row)"
-                  >Start</el-button
+          <!-- Content Here -->
+          <div class="content">
+            <el-table
+              v-if="dockerImagesParsed.length > 0"
+              :data="dockerImagesParsed"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="repository"
+                label="REPOSITORY"
+              ></el-table-column>
+              <el-table-column prop="tag" label="TAG"></el-table-column>
+              <el-table-column
+                prop="imageId"
+                label="IMAGE ID"
+              ></el-table-column>
+              <el-table-column prop="created" label="CREATED"></el-table-column>
+              <el-table-column prop="size" label="SIZE"></el-table-column>
+              <el-table-column label="ACTION">
+                <template v-slot="scope">
+                  <el-button size="mini" @click="openStartDialog(scope.row)"
+                    >Start</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 新增展示容器的表格 -->
+            <el-table
+              v-if="dockerContainersParsed.length > 0"
+              :data="dockerContainersParsed"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="containerId"
+                label="CONTAINER ID"
+              ></el-table-column>
+              <el-table-column prop="imageName" label="IMAGE"></el-table-column>
+              <el-table-column prop="command" label="COMMAND"></el-table-column>
+              <el-table-column prop="created" label="CREATED"></el-table-column>
+              <el-table-column prop="status" label="STATUS"></el-table-column>
+              <el-table-column prop="ports" label="PORTS"></el-table-column>
+              <!-- 其他需要的列 -->
+            </el-table>
+            <el-dialog title="Start Container" v-model="startDialogVisible">
+              <el-form :model="startForm">
+                <el-form-item label="Container Name">
+                  <el-input v-model="startForm.containerName"></el-input>
+                </el-form-item>
+
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="Host Port">
+                      <el-input v-model="startForm.hostPort"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="Container Port">
+                      <el-input v-model="startForm.containerPort"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+              <template v-slot:footer>
+                <el-button @click="startDialogVisible = false"
+                  >Cancel</el-button
+                >
+                <el-button type="primary" @click="startContainer"
+                  >Confirm</el-button
                 >
               </template>
-            </el-table-column>
-          </el-table>
-          <!-- 新增展示容器的表格 -->
-          <el-table
-            v-if="dockerContainersParsed.length > 0"
-            :data="dockerContainersParsed"
-            style="width: 100%"
-          >
-            <el-table-column
-              prop="containerId"
-              label="CONTAINER ID"
-            ></el-table-column>
-            <el-table-column prop="imageName" label="IMAGE"></el-table-column>
-            <el-table-column prop="command" label="COMMAND"></el-table-column>
-            <el-table-column prop="created" label="CREATED"></el-table-column>
-            <el-table-column prop="status" label="STATUS"></el-table-column>
-            <el-table-column prop="ports" label="PORTS"></el-table-column>
-            <!-- 其他需要的列 -->
-          </el-table>
-          <el-dialog title="Start Container" v-model="startDialogVisible">
-            <el-form :model="startForm">
-              <el-form-item label="Container Name">
-                <el-input v-model="startForm.containerName"></el-input>
-              </el-form-item>
-
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-form-item label="Host Port">
-                    <el-input v-model="startForm.hostPort"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="Container Port">
-                    <el-input v-model="startForm.containerPort"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <template v-slot:footer>
-              <el-button @click="startDialogVisible = false">Cancel</el-button>
-              <el-button type="primary" @click="startContainer"
-                >Confirm</el-button
-              >
-            </template>
-          </el-dialog>
-        </div>
-      </el-main>
+            </el-dialog>
+          </div>
+        </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
@@ -206,6 +213,14 @@ export default {
   color: #fff;
 }
 
+.header {
+  background-color: #297ec8; /* 深藍色 */
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .sidebar {
   background-color: #b3d4fc; /* 淺藍色 */
   transition: width 0.3s;
@@ -242,8 +257,11 @@ export default {
 }
 
 .sidebar-content {
+  align-items: center;
+  /* justify-content: center; */
   transition: margin-top 0.3s;
-  padding: 20px;
+  padding: 10px;
+  text-align: left;
 }
 
 .el-button {
