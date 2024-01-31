@@ -1,55 +1,66 @@
 <template>
   <div>
-    <div class="sidebar">
-      <el-button type="primary" @click="fetchDockerImages"
-        >List Docker Images</el-button
-      >
-    </div>
-    <div class="content">
-      <el-table
-        v-if="dockerImagesParsed.length > 0"
-        :data="dockerImagesParsed"
-        style="width: 100%"
-      >
-        <el-table-column prop="repository" label="REPOSITORY"></el-table-column>
-        <el-table-column prop="tag" label="TAG"></el-table-column>
-        <el-table-column prop="imageId" label="IMAGE ID"></el-table-column>
-        <el-table-column prop="created" label="CREATED"></el-table-column>
-        <el-table-column prop="size" label="SIZE"></el-table-column>
-        <el-table-column label="ACTION">
-          <template v-slot="scope">
-            <el-button size="mini" @click="openStartDialog(scope.row)"
-              >Start</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+    <!-- Sidebar -->
+    <el-container>
+      <el-aside width="200px">
+        <el-button type="primary" @click="fetchDockerImages"
+          >List Docker Images</el-button
+        >
+      </el-aside>
+      <!-- Main Content -->
+      <el-main>
+        <div class="content">
+          <el-table
+            v-if="dockerImagesParsed.length > 0"
+            :data="dockerImagesParsed"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="repository"
+              label="REPOSITORY"
+            ></el-table-column>
+            <el-table-column prop="tag" label="TAG"></el-table-column>
+            <el-table-column prop="imageId" label="IMAGE ID"></el-table-column>
+            <el-table-column prop="created" label="CREATED"></el-table-column>
+            <el-table-column prop="size" label="SIZE"></el-table-column>
+            <el-table-column label="ACTION">
+              <template v-slot="scope">
+                <el-button size="mini" @click="openStartDialog(scope.row)"
+                  >Start</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
 
-      <el-dialog title="Start Container" v-model="startDialogVisible">
-        <el-form :model="startForm">
-          <el-form-item label="Container Name">
-            <el-input v-model="startForm.containerName"></el-input>
-          </el-form-item>
+          <el-dialog title="Start Container" v-model="startDialogVisible">
+            <el-form :model="startForm">
+              <el-form-item label="Container Name">
+                <el-input v-model="startForm.containerName"></el-input>
+              </el-form-item>
 
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="Host Port">
-                <el-input v-model="startForm.hostPort"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="Container Port">
-                <el-input v-model="startForm.containerPort"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <template v-slot:footer>
-          <el-button @click="startDialogVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="startContainer">Confirm</el-button>
-        </template>
-      </el-dialog>
-    </div>
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <el-form-item label="Host Port">
+                    <el-input v-model="startForm.hostPort"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="Container Port">
+                    <el-input v-model="startForm.containerPort"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+            <template v-slot:footer>
+              <el-button @click="startDialogVisible = false">Cancel</el-button>
+              <el-button type="primary" @click="startContainer"
+                >Confirm</el-button
+              >
+            </template>
+          </el-dialog>
+        </div>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -124,18 +135,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.app-container {
-  display: flex;
-}
-
-.sidebar {
-  width: 200px;
-  transition: width 0.3s ease;
-  /* your existing styles */
-}
-
-.content {
-  flex-grow: 1;
-}
-</style>
