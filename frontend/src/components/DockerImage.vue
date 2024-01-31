@@ -4,8 +4,16 @@
     <el-container>
       <!-- Sidebar -->
       <el-aside :width="isSidebarCollapsed ? '0px' : '200px'" class="sidebar">
-        <div class="sidebar-content" :style="{ 'margin-top': isSidebarCollapsed ? '10px' : '60px' }">
-          <el-button type="primary" @click="fetchDockerImages">List Docker Images</el-button>
+        <div
+          class="sidebar-content"
+          :style="{ 'margin-top': isSidebarCollapsed ? '10px' : '60px' }"
+        >
+          <el-button type="primary" @click="fetchDockerImages"
+            >List Docker Images</el-button
+          >
+          <el-button type="primary" @click="fetchDockerContainers"
+            >List Docker Containers</el-button
+          >
         </div>
       </el-aside>
 
@@ -18,8 +26,8 @@
           @click="toggleSidebar"
           class="collapse-btn"
         >
-        <img :src="require('@/assets/collapseleft.png')" alt="Button Image" />
-      </el-button>
+          <img :src="require('@/assets/collapseleft.png')" alt="Button Image" />
+        </el-button>
 
         <!-- Content Here -->
         <div class="content">
@@ -44,7 +52,23 @@
               </template>
             </el-table-column>
           </el-table>
-
+          <!-- 新增展示容器的表格 -->
+          <el-table
+            v-if="dockerContainersParsed.length > 0"
+            :data="dockerContainersParsed"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="containerId"
+              label="CONTAINER ID"
+            ></el-table-column>
+            <el-table-column prop="imageName" label="IMAGE"></el-table-column>
+            <el-table-column prop="command" label="COMMAND"></el-table-column>
+            <el-table-column prop="created" label="CREATED"></el-table-column>
+            <el-table-column prop="status" label="STATUS"></el-table-column>
+            <el-table-column prop="ports" label="PORTS"></el-table-column>
+            <!-- 其他需要的列 -->
+          </el-table>
           <el-dialog title="Start Container" v-model="startDialogVisible">
             <el-form :model="startForm">
               <el-form-item label="Container Name">
@@ -86,6 +110,8 @@ export default {
     return {
       dockerImages: "",
       dockerImagesParsed: [],
+      dockerContainers: "",
+      dockerContainersParsed: [],
       startDialogVisible: false,
       selectedImage: null,
       isSidebarCollapsed: false,
@@ -119,6 +145,32 @@ export default {
         };
       });
     },
+    fetchDockerContainers() {
+      axios
+        .get("http://127.0.0.1:5000/list-docker-containers")
+        .then((response) => {
+          this.dockerContainers = response.data.containers;
+          this.parseDockerContainers();
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+    parseDockerContainers() {
+      const lines = this.dockerContainers.split("\n").slice(1); // 移除標頭行
+      this.dockerContainersParsed = lines.map((line) => {
+        const parts = line.split(/\s{2,}/); // 用兩個或更多空格分割
+        return {
+          containerId: parts[0],
+          imageName: parts[1],
+          command: parts[2],
+          created: parts[3],
+          status: parts[4],
+          ports: parts[5],
+          name: parts[6],
+          // 根據您的容器資訊格式，這裡可能需要添加或移除某些字段
+        };
+      });
+    },
+
     openStartDialog(row) {
       this.selectedImage = row.repository;
       this.startDialogVisible = true;
@@ -150,7 +202,7 @@ export default {
 </script>
 <style scoped>
 .app-container {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   color: #fff;
 }
 
@@ -198,7 +250,7 @@ export default {
   margin: 10px 0;
   border: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .el-button-primary {

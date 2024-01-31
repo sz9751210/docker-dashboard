@@ -41,6 +41,15 @@ def start_container():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+@app.route('/list-docker-containers', methods=['GET'])
+def list_docker_containers():
+    try:
+        # Run the 'docker images' command and capture the output
+        output = subprocess.check_output(['docker', 'ps']).decode('utf-8')
+        return jsonify({'containers': output})
+    except subprocess.CalledProcessError as e:
+        return jsonify({'error': str(e)})
+
 
 @app.route('/list-folders', methods=['GET'])
 def list_folders():
