@@ -6,6 +6,17 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+
+# Image
+@app.route('/list-docker-images', methods=['GET'])
+def list_docker_images():
+    try:
+        # Run the 'docker images' command and capture the output
+        output = subprocess.check_output(['docker', 'images']).decode('utf-8')
+        return jsonify({'images': output})
+    except subprocess.CalledProcessError as e:
+        return jsonify({'error': str(e)})
+
 @app.route('/list-folders', methods=['GET'])
 def list_folders():
     base_path = '../stack'

@@ -1,14 +1,18 @@
 # Simple Makefile
 
+# Install NPM packages
+install-npm:
+	cd frontend && npm install
+
 # Run Python server
 run-python:
 	cd backend && python3 main.py
 
 # Run NPM server
-run-npm:
+run-vue:
 	cd frontend && npm run serve
 
 # Start both Python and NPM servers
-up: run-python run-npm
+up: install-npm run-python run-npm
 
-.PHONY: run-python run-npm up
+.PHONY: install-npm run-python run-npm up
