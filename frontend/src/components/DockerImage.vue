@@ -1,14 +1,27 @@
 <template>
-  <div>
-    <!-- Sidebar -->
+  <div class="app-container">
+    <!-- Container -->
     <el-container>
-      <el-aside width="200px">
-        <el-button type="primary" @click="fetchDockerImages"
-          >List Docker Images</el-button
-        >
+      <!-- Sidebar -->
+      <el-aside :width="isSidebarCollapsed ? '0px' : '200px'" class="sidebar">
+        <div class="sidebar-content" :style="{ 'margin-top': isSidebarCollapsed ? '10px' : '60px' }">
+          <el-button type="primary" @click="fetchDockerImages">List Docker Images</el-button>
+        </div>
       </el-aside>
+
       <!-- Main Content -->
-      <el-main>
+      <el-main class="main-content">
+        <!-- Collapse Button -->
+        <el-button
+          type="primary"
+          icon="el-icon-menu"
+          @click="toggleSidebar"
+          class="collapse-btn"
+        >
+        <img :src="require('@/assets/collapseleft.png')" alt="Button Image" />
+      </el-button>
+
+        <!-- Content Here -->
         <div class="content">
           <el-table
             v-if="dockerImagesParsed.length > 0"
@@ -135,3 +148,61 @@ export default {
   },
 };
 </script>
+<style scoped>
+.app-container {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #fff;
+}
+
+.sidebar {
+  background-color: #b3d4fc; /* 淺藍色 */
+  transition: width 0.3s;
+  border-right: 1px solid #d3e0ea;
+}
+
+.main-content {
+  background-color: #1e3d59; /* 深藍色 */
+  padding-top: 70px;
+  /* padding: 50px; */
+}
+
+.collapse-btn {
+  display: flex; /* 使用 flex 布局 */
+  justify-content: center; /* 保证内容居中 */
+  align-items: center; /* 垂直居中 */
+  left: 0;
+  top: 10px;
+  z-index: 1000;
+  transition: left 0.3s;
+  color: #1e3d59; /* 按鈕顏色 */
+  border-color: #1e3d59;
+}
+
+.collapse-btn img {
+  width: 30px; /* 或者您希望的尺寸 */
+  height: auto;
+  margin-right: 5px;
+  order: -1;
+}
+
+.el-main {
+  position: relative;
+}
+
+.sidebar-content {
+  transition: margin-top 0.3s;
+  padding: 20px;
+}
+
+.el-button {
+  margin: 10px 0;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.el-button-primary {
+  background-color: #1e3d59;
+  border-color: #1e3d59;
+}
+</style>
