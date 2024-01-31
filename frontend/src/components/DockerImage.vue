@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="sidebar">
-      <el-button type="primary" @click="fetchDockerImages">List Docker Images</el-button>
+      <el-button type="primary" @click="fetchDockerImages"
+        >List Docker Images</el-button
+      >
     </div>
     <div class="content">
       <el-table
@@ -24,31 +26,29 @@
       </el-table>
 
       <el-dialog title="Start Container" v-model="startDialogVisible">
-  <el-form :model="startForm">
-    <el-form-item label="Container Name">
-      <el-input v-model="startForm.containerName"></el-input>
-    </el-form-item>
-    
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-form-item label="Host Port">
-          <el-input v-model="startForm.hostPort"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="Container Port">
-          <el-input v-model="startForm.containerPort"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
+        <el-form :model="startForm">
+          <el-form-item label="Container Name">
+            <el-input v-model="startForm.containerName"></el-input>
+          </el-form-item>
 
-  </el-form>
-  <template v-slot:footer>
-    <el-button @click="startDialogVisible = false">Cancel</el-button>
-    <el-button type="primary" @click="startContainer">Confirm</el-button>
-  </template>
-</el-dialog>
-
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="Host Port">
+                <el-input v-model="startForm.hostPort"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="Container Port">
+                <el-input v-model="startForm.containerPort"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <template v-slot:footer>
+          <el-button @click="startDialogVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="startContainer">Confirm</el-button>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -57,8 +57,7 @@
 import axios from "axios";
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       dockerImages: "",
