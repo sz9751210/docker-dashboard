@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import subprocess
 import os
@@ -16,6 +16,31 @@ def list_docker_images():
         return jsonify({'images': output})
     except subprocess.CalledProcessError as e:
         return jsonify({'error': str(e)})
+
+@app.route('/start-container', methods=['POST'])
+def start_container():
+    data = request.json
+    repository = data.get('repository')
+    container_name = data.get('containerName')
+    host_port = data.get('hostPort')
+    container_port = data.get('containerPort')
+    # 提取其他參數
+    print(repository, container_name, host_port, container_port)
+
+    try:
+        # Assemble the command
+        command = ['docker', 'run', '-d', '--name', container_name, '-p', f"{host_port}:{container_port}", repository]
+        command_str = ' '.join(command)
+        
+        # Log the command
+        print(f"Executing command: {command_str}")
+
+        # Execute the command
+        subprocess.check_output(command, stderr=subprocess.STDOUT)
+        return jsonify({'status': 'Container started successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 
 @app.route('/list-folders', methods=['GET'])
 def list_folders():
