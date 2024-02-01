@@ -136,6 +136,7 @@ export default {
         .then((response) => {
           this.dockerImages = response.data.images;
           this.parseDockerImages();
+          this.dockerContainersParsed = []; // 清空容器資訊
         })
         .catch((error) => console.error("Error:", error));
     },
@@ -158,6 +159,7 @@ export default {
         .then((response) => {
           this.dockerContainers = response.data.containers;
           this.parseDockerContainers();
+          this.dockerImagesParsed = []; // 清空映像檔資訊
         })
         .catch((error) => console.error("Error:", error));
     },
